@@ -34,7 +34,6 @@ export function deleteCourse(courseId) {
     return course;
   } 
   export function findEnrolledStudentForCourse(courseId) {
-    console.log("fetching all enrolled users...")
     const {enrollments, users} = Database;
     const enrolledUsers = users
     .filter((user) =>
