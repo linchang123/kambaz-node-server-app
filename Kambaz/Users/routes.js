@@ -6,7 +6,10 @@ import * as enrollmentsDao from "../Enrollments/dao.js";
 export default function UserRoutes(app) {
   const createUser = (req, res) => { };
   const deleteUser = (req, res) => { };
-  const findAllUsers = (req, res) => { };
+  const findAllUsers = (req, res) => { 
+    const users = dao.findAllUsers();
+    res.json(users);
+  };
   const findUserById = (req, res) => { };
   const updateUser = (req, res) => { 
     const userId = req.params.userId;
@@ -109,15 +112,35 @@ export default function UserRoutes(app) {
     const courses = courseDao.findCoursesForEnrolledUser(userId);
     res.json(courses);
   };
+  const findEnrollmentsForUser = (req, res) => {
+    let { userId } = req.params;
+    if (userId === "current") {
+      const currentUser = req.session["currentUser"];
+      if (!currentUser) {
+        res.sendStatus(401);
+        return;
+      }
+      userId = currentUser._id;
+    }
+    const enrollments = enrollmentsDao.findEnrollmentsforUser(userId);
+    res.json(enrollments);
+  };
   const createCourse = (req, res) => {
     const currentUser = req.session["currentUser"];
     const newCourse = courseDao.createCourse(req.body);
     enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
     res.json(newCourse);
   };
-  
+  const enrollCourseForCurrentUser = (req, res) => {
+    const currentUser = req.session["currentUser"];
+    const courseId = req.body.courseId;
+    const newEnrollment = enrollmentsDao.enrollUserInCourse(currentUser._id, courseId);
+    res.json(newEnrollment);
+  };
+
   app.post("/api/users/current/courses", createCourse);
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
+  app.get("/api/users/:userId/enrollments", findEnrollmentsForUser);
 
   app.post("/api/users", createUser);
   app.get("/api/users", findAllUsers);
@@ -131,4 +154,7 @@ export default function UserRoutes(app) {
   app.post("/api/users/signin", signin);
   app.post("/api/users/signout", signout);
   app.post("/api/users/profile", profile);
+
+  app.post("/api/users/enroll", enrollCourseForCurrentUser);
+
 }

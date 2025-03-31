@@ -56,8 +56,11 @@ app.delete("/lab5/todos/:id", (req, res) => {
     if (todoIndex === -1) {
         res.status(404).json({ message: `Unable to delete Todo with ID ${id}` });
         return;
-      }
-  
+    }
+    else {
+      todos.splice(todoIndex, 1);
+      res.sendStatus(200);
+    }
   });
 
 app.get("/lab5/todos/:id/title/:title", (req, res) => {
