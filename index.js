@@ -4,6 +4,7 @@ import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
 import session from "express-session";
 import cors from "cors";
+import mongoose from "mongoose";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import SessionController from "./Lab5/SessionController.js";
@@ -15,7 +16,8 @@ import EnrollmentRoutes from './Kambaz/Enrollments/routes.js';
  * development environment, and configure the session accordingly.
  *  */ 
 import "dotenv/config";
-
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
+mongoose.connect(CONNECTION_STRING);
 const app = express()   // express() function call creates an instance of the express library and assigns it to local constant "app"
 /**
  * Configure CORS to support cookies and restrict network access
